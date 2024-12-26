@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: feederizer
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/feederizer/data
+    environment:
+      - APP_ENV=production
+      - DB_FILE=/feederizer/data/feederizer.db
