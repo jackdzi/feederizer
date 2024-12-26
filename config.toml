@@ -1,0 +1,5 @@
+[deployment]
+
+docker = true
+port = 8080
+db_path = "~/Documents/databases/feederizer.db"
