@@ -1,12 +1,12 @@
 package db
 
 import (
-  "github.com/jmoiron/sqlx"
-  _ "github.com/mattn/go-sqlite3"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func NewDatabaseConnection() (*sqlx.DB, error) {
-  db, err := sqlx.Open("sqlite3", "data/feederizer.db")
+  db, err := sqlx.Open("sqlite3", "/data/feederizer.db")
   if err != nil {
     return nil, err
   }

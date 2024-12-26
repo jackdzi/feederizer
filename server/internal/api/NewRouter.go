@@ -10,6 +10,11 @@ import (
 func NewRouter(db *sqlx.DB) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
+  whitelist := make(map[string]bool)
+  whitelist["::1"] = true
+  whitelist["172.20.0.1"] = true
+
+  router.Use(IPWhiteList(whitelist))
 	router.SetTrustedProxies([]string{"127.0.0.1"})
 
 	router.GET("/info", func(c *gin.Context) {

@@ -2,12 +2,13 @@ version: '3.8'
 
 services:
   app:
+    image: feederizer_server:1.0
     build: .
     container_name: feederizer
+    volumes:
+      - /home/jdzialo/Documents/databases/feederizer.db:/data/feederizer.db:z
     ports:
       - "8080:8080"
-    volumes:
-      - ./data:/feederizer/data
     environment:
       - APP_ENV=production
-      - DB_FILE=/feederizer/data/feederizer.db
+      - DB_FILE=/data/feederizer.db

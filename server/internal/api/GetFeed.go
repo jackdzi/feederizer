@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-  "fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -14,7 +13,6 @@ type Feed struct {
 }
 
 func GetFeed(db *sqlx.DB, c *gin.Context) {
-  fmt.Println("Called")
 	var feeds []Feed
 	err := db.Select(&feeds, "SELECT column1, column2 FROM data")
 	if err != nil {
