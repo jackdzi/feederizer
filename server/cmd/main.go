@@ -3,8 +3,8 @@ package main
 import (
   "log"
 
-  "feederizer/internal/api"
-  "feederizer/internal/db"
+  "feederizer/server/internal/api"
+  "feederizer/server/internal/db"
 )
 
 func main() {

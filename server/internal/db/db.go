@@ -6,7 +6,7 @@ import (
 )
 
 func NewDatabaseConnection() (*sqlx.DB, error) {
-  db, err := sqlx.Open("sqlite3", "../../feederizer.db")
+  db, err := sqlx.Open("sqlite3", "data/feederizer.db")
   if err != nil {
     return nil, err
   }

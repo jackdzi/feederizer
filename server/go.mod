@@ -1,4 +1,4 @@
-module feederizer
+module feederizer/server
 
 go 1.23.4
 
