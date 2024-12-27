@@ -8,13 +8,14 @@ import (
 )
 
 type Feed struct {
-	Column1 string `db:"column1"`
-	Column2 string `db:"column2"`
+	Id string `db:"id"`
+	Name string `db:"name"`
+  Password string `db:"password"`
 }
 
 func GetFeed(db *sqlx.DB, c *gin.Context) {
 	var feeds []Feed
-	err := db.Select(&feeds, "SELECT column1, column2 FROM data")
+	err := db.Select(&feeds, "SELECT id, name, password FROM users")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
