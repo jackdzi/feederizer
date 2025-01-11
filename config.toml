@@ -1,5 +1,10 @@
 [deployment]
 
-docker = true
+docker = false
 port = 8080
 db_path = "~/Documents/databases/feederizer.db"
+
+[theme]
+
+borderColor = "#800080"
+textColor = "#FFFFFF"

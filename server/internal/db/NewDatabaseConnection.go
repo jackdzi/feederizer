@@ -1,16 +1,36 @@
 package db
 
 import (
+	"log"
+	"os"
+
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/pelletier/go-toml"
 )
 
 func NewDatabaseConnection() (*sqlx.DB, error) {
-  db, err := sqlx.Open("sqlite3", "data/feederizer.db")
-  if err != nil {
-    return nil, err
-  }
-  db.Exec("PRAGMA foreign_keys = ON;")
+	var docker bool
+	config, err := os.ReadFile("../config.toml")
+	// if err != nil {
+	//    config, err1 := os.ReadFile("config.toml")
+	// }
 
-  return db, nil
+	tree, err := toml.Load(string(config))
+	if err != nil {
+		log.Fatalf("Error parsing config file: %v", err)
+	}
+
+	docker = tree.Get("deployment.docker").(bool)
+	path := "data/feederizer.db"
+	if docker {
+		path = "/data/feederizer.db"
+	}
+	db, err := sqlx.Open("sqlite3", path)
+	if err != nil {
+		return nil, err
+	}
+	db.Exec("PRAGMA foreign_keys = ON;")
+
+	return db, nil
 }
