@@ -1,4 +1,4 @@
-module feederizer/server
+module github.com/jackdzi/feederizer/server
 
 go 1.23.4
 

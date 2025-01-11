@@ -1,8 +1,8 @@
 package home
 
 import (
-	"feederizer/ui/internal/pages/page"
-	"feederizer/ui/internal/theme"
+	"github.com/jackdzi/feederizer/ui/internal/pages/page"
+	"github.com/jackdzi/feederizer/ui/internal/theme"
 	"os"
 	"os/exec"
 

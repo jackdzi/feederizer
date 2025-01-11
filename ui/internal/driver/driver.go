@@ -1,11 +1,11 @@
 package driver
 
 import (
-	"feederizer/ui/internal/pages/home"
-	"feederizer/ui/internal/pages/login"
-	"feederizer/ui/internal/pages/newUser"
-	"feederizer/ui/internal/pages/page"
-	"feederizer/ui/internal/theme"
+	"github.com/jackdzi/feederizer/ui/internal/pages/home"
+	"github.com/jackdzi/feederizer/ui/internal/pages/login"
+	"github.com/jackdzi/feederizer/ui/internal/pages/newUser"
+	"github.com/jackdzi/feederizer/ui/internal/pages/page"
+	"github.com/jackdzi/feederizer/ui/internal/theme"
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"

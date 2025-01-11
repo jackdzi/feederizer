@@ -1,4 +1,4 @@
-module feederizer/ui
+module github.com/jackdzi/feederizer/ui
 
 go 1.23.4
 

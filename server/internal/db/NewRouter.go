@@ -1,7 +1,7 @@
 package db
 
 import (
-	"feederizer/server/internal/api"
+	"github.com/jackdzi/feederizer/server/internal/api"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

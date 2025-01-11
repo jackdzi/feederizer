@@ -3,7 +3,7 @@ package main
 import (
   "log"
 
-  "feederizer/server/internal/db"
+  "github.com/jackdzi/feederizer/server/internal/db"
 )
 
 func main() {
