@@ -2,14 +2,12 @@ package driver
 
 import (
 	"feederizer/ui/internal/pages/home"
-	"feederizer/ui/internal/pages/page"
-	"feederizer/ui/internal/pages/newUser"
 	"feederizer/ui/internal/pages/login"
+	"feederizer/ui/internal/pages/newUser"
+	"feederizer/ui/internal/pages/page"
 	"feederizer/ui/internal/theme"
 	"fmt"
 
-	"github.com/charmbracelet/bubbles/help"
-	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -20,7 +18,7 @@ type (
 
 const (
 	Home currentpage = iota
-  Login
+	Login
 	Loading
 	Feeds
 	addUser
@@ -30,8 +28,6 @@ type model struct {
 	page  currentpage
 	pages map[currentpage]page.Model
 
-	help   help.Model
-	keys   keyMap
 	styles theme.Styles
 }
 
@@ -41,44 +37,22 @@ func (m *model) Init() tea.Cmd {
 	style.ApplySizes()
 	m.pages[addUser] = newUser.New(style)
 	m.pages[Home] = home.New(style)
-  m.pages[Login] = login.New(style)
+	m.pages[Login] = login.New(style)
 	return nil
 }
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
-	updatedMsg := msg
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch {
-		case key.Matches(msg, m.keys.Help):
-			if m.page == Home {
-				m.help.ShowAll = !m.help.ShowAll
-			}
-		case key.Matches(msg, m.keys.Quit):
-			if m.page == Home {
-				fmt.Print("\033[H\033[2J")
-				cmds = append(cmds, tea.Quit)
-			}
-		case key.Matches(msg, m.keys.AddUser):
-			if m.page == Home {
-				m.page = addUser
-				updatedMsg = tea.KeyMsg{Type: tea.KeyBackspace}
-			}
-		case key.Matches(msg, m.keys.DeleteFeed):
-			if m.page == Home {
-				if err := deleteUsers(); err != nil {
-					print("Error: ", err)
-					cmds = append(cmds, tea.Quit)
-				}
-			}
-		}
-  case page.Login:
-    m.page = Login
-    m.pages[m.page] = login.New(m.styles)
+	switch msg.(type) {
+	case page.Quit:
+		fmt.Print("\033[H\033[2J")
+		cmds = append(cmds, tea.Quit)
+	case page.Login:
+		m.page = Login
+		m.pages[m.page] = login.New(m.styles)
 	case page.User:
 		m.page = addUser
-    m.pages[m.page] = newUser.New(m.styles)
+		m.pages[m.page] = newUser.New(m.styles)
 	case page.BackMsg:
 		m.page = Home
 	case tea.WindowSizeMsg:
@@ -88,9 +62,10 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		m.styles.ApplySizes()
 	}
+
 	currentPageModel := m.getCurrentPageModel()
 	if currentPageModel != nil {
-		newPageModel, cmd := currentPageModel.Update(updatedMsg)
+		newPageModel, cmd := currentPageModel.Update(msg)
 		m.updatePageModel(newPageModel, m.page)
 		cmds = append(cmds, cmd)
 	}
@@ -106,9 +81,8 @@ func (m *model) getCurrentPageModel() page.Model {
 }
 
 func (m *model) View() string {
-	helpView := m.help.View(m.keys)
 	currentPageModel := m.getCurrentPageModel()
-	return currentPageModel.View() + helpView
+	return currentPageModel.View()
 }
 
 func New(styles theme.Styles) *tea.Program {
@@ -116,8 +90,6 @@ func New(styles theme.Styles) *tea.Program {
 		&model{
 			page:   Home,
 			pages:  make(map[currentpage]page.Model),
-			help:   help.New(),
-			keys:   keys_config,
 			styles: styles,
 		})
 }

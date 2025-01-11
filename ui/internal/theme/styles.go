@@ -41,7 +41,7 @@ func (s *Styles) ApplySizes() {
 	s.Centering = s.Centering.Width(w)
 	s.Input.Instructions = s.Input.Instructions.Width(w)
 	s.Input.BottomPadding = s.Input.BottomPadding.Margin(0, 0, h/3+2, 0)
-	s.Homepage.BottomPadding = s.Input.BottomPadding.Margin(0, 0, h/3+2, 0)
+	s.Homepage.BottomPadding = s.Input.BottomPadding.Margin(0, 0, h/3-1, 0)
 }
 
 func (s *Styles) RenderInstructions() string {

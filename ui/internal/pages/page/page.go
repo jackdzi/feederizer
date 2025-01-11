@@ -10,6 +10,12 @@ type User struct{}
 
 type Login struct{}
 
+type Quit struct{}
+
+func ReturnQuit() tea.Msg {
+  return Quit{}
+}
+
 func ReturnLogin() tea.Msg {
   return Login{}
 }

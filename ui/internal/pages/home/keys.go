@@ -1,4 +1,4 @@
-package driver
+package home
 
 import "github.com/charmbracelet/bubbles/key"
 
@@ -9,10 +9,7 @@ type keyMap struct {
 	Right          key.Binding
 	Help           key.Binding
 	Quit           key.Binding
-	AddUser        key.Binding
 	InitializeFeed key.Binding
-	DeleteFeed     key.Binding
-	EnterInputMode key.Binding
 	Enter          key.Binding
 }
 
@@ -23,8 +20,7 @@ func (k keyMap) ShortHelp() []key.Binding {
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		{k.Up, k.Down, k.Left, k.Right},
-		{k.Enter, k.AddUser, k.InitializeFeed, k.DeleteFeed},
-		{k.Help, k.Quit},
+		{k.Enter, k.InitializeFeed, k.Help, k.Quit},
 	}
 }
 
@@ -57,20 +53,8 @@ var keys_config = keyMap{
 		key.WithKeys("q", "esc", "ctrl+c"),
 		key.WithHelp("q", "quit"),
 	),
-	AddUser: key.NewBinding(
-		key.WithKeys("u"),
-		key.WithHelp("u", "add user"),
-	),
 	InitializeFeed: key.NewBinding(
 		key.WithKeys("I"),
 		key.WithHelp("I", "initialize database"),
-	),
-	DeleteFeed: key.NewBinding(
-		key.WithKeys("d"),
-		key.WithHelp("d", "delete users"),
-	),
-	EnterInputMode: key.NewBinding(
-		key.WithKeys("i"),
-		key.WithHelp("i", "enter input mode"),
 	),
 }
