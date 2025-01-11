@@ -82,7 +82,7 @@ func (m *model) getCurrentPageModel() page.Model {
 
 func (m *model) View() string {
 	currentPageModel := m.getCurrentPageModel()
-	return currentPageModel.View()
+	return " " + m.styles.Title.Render(" Feederizer") + currentPageModel.View()
 }
 
 func New(styles theme.Styles) *tea.Program {

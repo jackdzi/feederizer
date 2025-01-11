@@ -10,6 +10,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type model struct {
@@ -30,17 +31,21 @@ func New(styles theme.Styles) page.Model {
 	}
 
 	rows := []table.Row{
-		{"Login"},
-		{"Create New User"},
-		{"Edit Config"},
+		{"Login "},
+		{"Create New User "},
+		{"Edit Config "},
 	}
+  tableStyles := table.DefaultStyles()
+  tableStyles.Selected = lipgloss.NewStyle().Bold(true).Background(lipgloss.Color(styles.TextHighlight)).Foreground(lipgloss.Color(styles.TextColor))
 
 	t := table.New(
 		table.WithColumns(columns),
 		table.WithRows(rows),
 		table.WithFocused(true),
 		table.WithHeight(6),
+    table.WithStyles(tableStyles),
 	)
+
 
 	return &model{
 		help:   help.New(),
@@ -66,11 +71,11 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 			m.help.ShowAll = !m.help.ShowAll
 		case key.Matches(msg, m.keys.Enter):
 			switch selected := m.table.SelectedRow()[0]; selected {
-			case "Login":
+			case "Login ":
 				return m, page.ReturnLogin
-			case "Edit Config":
+			case "Edit Config ":
 				openFileWithDefaultEditor("../config.toml") // TODO: Change for docker
-			case "Create New User":
+			case "Create New User ":
 				return m, page.ReturnUser
 			}
 		}
@@ -85,7 +90,7 @@ func (m model) View() string {
   if !m.help.ShowAll {
     spaces = "\n\n\n"
   }
-	return m.styles.Title.Render("Feederizer") + m.styles.Centering.Render("\n\n"+m.styles.Homepage.Box.Render(m.table.View())) + m.styles.Homepage.BottomPadding.Render() + spaces + helpview
+	return m.styles.Centering.Render("\n\n"+m.styles.Homepage.Box.Render(m.table.View())) + m.styles.Homepage.BottomPadding.Render() + spaces + helpview
 }
 
 func (m model) GetPageTitle() string {

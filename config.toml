@@ -7,4 +7,7 @@ db_path = "~/Documents/databases/feederizer.db"
 [theme]
 
 borderColor = "#800080"
-textColor = "#FFFFFF"
+textColor = "#F5F5DC"
+textHighlight = "#800080"
+titleColor = "#4B0082"
+titleTextColor = "#F5F5DC"

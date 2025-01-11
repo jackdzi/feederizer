@@ -8,15 +8,19 @@ import (
 	"golang.org/x/term"
 )
 
-var border_color = lipgloss.Color(border_color_string)
-var text_color = lipgloss.Color(text_color_string)
+var (
+	border_color = lipgloss.Color(border_color_string)
+	text_color   = lipgloss.Color(text_color_string)
+)
 
 type Styles struct {
-	Input     InputStyles
-	Footer    lipgloss.Style
-	Centering lipgloss.Style
-	Homepage  Homepage
-  Title     lipgloss.Style
+	Input         InputStyles
+	Footer        lipgloss.Style
+	Centering     lipgloss.Style
+	Homepage      Homepage
+	Title         lipgloss.Style
+	TextColor     string
+	TextHighlight string
 }
 
 type InputStyles struct {
@@ -36,8 +40,14 @@ func (s *Styles) ApplySizes() {
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
-	s.Input.Box = s.Input.Box.Width(w / 3).MarginTop(h/3 + 1)
-	s.Homepage.Box = s.Input.Box.Width(w / 3).MarginTop(h/3 + 1)
+	var width int
+	if w/3 < 38 {
+		width = 38
+	} else {
+		width = w / 3
+	}
+	s.Input.Box = s.Input.Box.Width(width).MarginTop(h/3 + 1)
+	s.Homepage.Box = s.Input.Box.Width(width).MarginTop(h/3 + 1)
 	s.Centering = s.Centering.Width(w)
 	s.Input.Instructions = s.Input.Instructions.Width(w)
 	s.Input.BottomPadding = s.Input.BottomPadding.Margin(0, 0, h/3+2, 0)
@@ -50,9 +60,11 @@ func (s *Styles) RenderInstructions() string {
 
 func NewStyles() Styles {
 	s := Styles{}
-  s.Title = lipgloss.NewStyle().
-    Background(lipgloss.Color(border_color_string)).Width(10).
-    Foreground(lipgloss.Color(text_color_string))
+	s.TextColor = text_color_string
+	s.TextHighlight = text_highlight_string
+	s.Title = lipgloss.NewStyle().Margin(0).Width(12).
+		Background(lipgloss.Color(title_color_string)).
+		Foreground(lipgloss.Color(title_text_color_string))
 	s.Footer = lipgloss.NewStyle().Margin(1, 0, 0, 1)
 	s.Input.Box = lipgloss.NewStyle().
 		Padding(3, 2).
