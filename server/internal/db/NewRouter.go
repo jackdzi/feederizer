@@ -1,15 +1,22 @@
 package db
 
 import (
-	"github.com/jackdzi/feederizer/server/internal/api"
+	"io"
 	"net/http"
+
+	"github.com/jackdzi/feederizer/server/internal/api"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 )
 
-func NewRouter(db *sqlx.DB) *gin.Engine {
+var loggedUser string
+
+func NewRouter(db *sqlx.DB, silenced bool) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
+  if silenced {
+    gin.DefaultWriter = io.Discard
+  }
 	router := gin.Default()
 	whitelist := make(map[string]bool)
 	whitelist["::1"] = true
@@ -17,6 +24,10 @@ func NewRouter(db *sqlx.DB) *gin.Engine {
 
 	router.Use(IPWhiteList(whitelist))
 	router.SetTrustedProxies([]string{"127.0.0.1"})
+
+  router.POST("/subscription/add", func(c *gin.Context) {
+    api.AddSubscription(db, c, loggedUser)
+  })
 
 	router.GET("/info", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "API is running!"})
@@ -38,9 +49,16 @@ func NewRouter(db *sqlx.DB) *gin.Engine {
 		api.AddUser(db, c)
 	})
 
-	router.GET("/feed", func(c *gin.Context) {
+	router.POST("/user/check", func(c *gin.Context) {
+    loggedUser = api.CheckUser(db, c)
+	})
+
+	router.GET("/feedtest", func(c *gin.Context) {
 		api.GetFeed(db, c)
 	})
 
+  router.GET("/feed", func(c *gin.Context) {
+    api.GetSubscribedFeedItems(db, c, loggedUser)
+  })
 	return router
 }

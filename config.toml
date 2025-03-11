@@ -1,13 +1,17 @@
-[deployment]
 
-docker = false
-port = 8080
-db_path = "~/Documents/databases/feederizer.db"
+[authentication]
+  autoLogin = true
+  pass = "Zg=="
+  user = "asdf"
+
+[deployment]
+  db_path = "~/Documents/databases/feederizer.db"
+  docker = false
+  port = 8080
 
 [theme]
-
-borderColor = "#800080"
-textColor = "#F5F5DC"
-textHighlight = "#800080"
-titleColor = "#4B0082"
-titleTextColor = "#F5F5DC"
+  borderColor = "#800080"
+  textColor = "#F5F5DC"
+  textHighlight = "#5B0082"
+  titleColor = "#4B0082"
+  titleTextColor = "#F5F5DC"

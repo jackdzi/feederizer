@@ -1,12 +1,11 @@
 package newUser
 
 import (
-  "fmt"
-	"bytes"
-	"encoding/json"
-	"feederizer/ui/internal/pages/page"
-	"feederizer/ui/internal/theme"
-	"net/http"
+	"fmt"
+
+	"github.com/jackdzi/feederizer/ui/internal/api"
+	"github.com/jackdzi/feederizer/ui/internal/pages/page"
+	"github.com/jackdzi/feederizer/ui/internal/theme"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -70,9 +69,11 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 					fmt.Println("Error: ", err)
 					return m, tea.Quit
 				}
+				user := m.inputs[username].Value()
+				pass := m.inputs[password].Value()
 				m.reset()
 				if !m.userTaken {
-					return m, page.ReturnBackMsg
+					return m, page.ReturnAuthentication(user, pass)
 				}
         m.inputs[username].Prompt = "\033[31mUsername \033[31malready \033[31mtaken, \033[31mtry \033[31magain\033[0m\n"
 			} else {
@@ -122,19 +123,11 @@ func (m *model) reset() {
 
 func (m *model) submitUserData() error {
 	data := map[string]string{"name": m.inputs[username].Value(), "password": m.inputs[password].Value()}
-	m.reset()
-
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		fmt.Println("Error parsing string to JSON")
-		return err
-	}
-
-	resp, err := http.Post("http://localhost:8080/user", "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		return err
-	}
-	m.userTaken = (resp.StatusCode != http.StatusOK)
+  userTaken, err := api.AddUser(data)
+  if err != nil {
+    fmt.Println(err)
+  }
+  m.userTaken = userTaken
 	return nil
 }
 

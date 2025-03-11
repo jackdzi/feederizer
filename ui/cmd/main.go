@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
+  "time"
 
-	"feederizer/ui/internal/driver"
-	"feederizer/ui/internal/theme"
-
+	"github.com/jackdzi/feederizer/ui/internal/driver"
+	"github.com/jackdzi/feederizer/ui/internal/theme"
+  //"github.com/jackdzi/feederizer/server/shared"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +21,11 @@ var (
 			if len(args) > 0 {
 				os.Exit(1)
 			}
-      // TODO: Check if user is logged in already and then skip login page to go right to the user's feed. Will have to implement currentPage in driver.New()
+      // TODO: Check if user is logged in already and then skip login page to go right to the user's feed. Will have to implement currentPage in driver.New(). Same with concurrent server running if docker == false
+      //
+      //go shared.RunServer()
+      time.Sleep(5 * time.Millisecond)
+
       program := driver.New(theme.NewStyles())
       program.Run()
       program.ReleaseTerminal()

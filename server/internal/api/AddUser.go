@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 )
@@ -19,7 +17,6 @@ func AddUser(db *sqlx.DB, c *gin.Context) {
 	}
 
 	query := "INSERT INTO users (name, password) VALUES (?, ?)"
-  fmt.Println(query, user.Password)
 	_, err := db.Exec(query, user.Name, user.Password)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})

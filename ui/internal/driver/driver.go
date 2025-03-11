@@ -1,32 +1,35 @@
 package driver
 
 import (
+	"fmt"
+
+	"github.com/jackdzi/feederizer/ui/internal/api"
+	"github.com/jackdzi/feederizer/ui/internal/config"
+	"github.com/jackdzi/feederizer/ui/internal/pages/confirmation"
+	"github.com/jackdzi/feederizer/ui/internal/pages/feed"
+	"github.com/jackdzi/feederizer/ui/internal/pages/reader"
 	"github.com/jackdzi/feederizer/ui/internal/pages/home"
 	"github.com/jackdzi/feederizer/ui/internal/pages/login"
 	"github.com/jackdzi/feederizer/ui/internal/pages/newUser"
 	"github.com/jackdzi/feederizer/ui/internal/pages/page"
 	"github.com/jackdzi/feederizer/ui/internal/theme"
-	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type (
-	mode        int8
-	currentpage int8
-)
-
 const (
-	Home currentpage = iota
+	Home page.Currentpage = iota
 	Login
-	Loading
-	Feeds
 	addUser
+	Confirmation
+	Feed
+  Reader
 )
 
 type model struct {
-	page  currentpage
-	pages map[currentpage]page.Model
+	page  page.Currentpage
+	pages map[page.Currentpage]page.Model
+	user  string
 
 	styles theme.Styles
 }
@@ -38,15 +41,39 @@ func (m *model) Init() tea.Cmd {
 	m.pages[addUser] = newUser.New(style)
 	m.pages[Home] = home.New(style)
 	m.pages[Login] = login.New(style)
+	m.pages[Confirmation] = confirmation.New(style)
+	m.pages[Feed] = feed.New(style)
+  m.pages[Reader] = reader.New(style)
+	autoLog := m.handleLogin("", "", true)
+	if autoLog {
+		if config.ReturnConfig().Get("authentication.autoLogin").(bool) {
+			m.page = Feed
+		}
+	}
 	return nil
 }
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
-	switch msg.(type) {
+	switch msg := msg.(type) {
+	case page.Authentication:
+		user, pass := msg.AuthData()
+		m.handleLogin(user, pass, false)
+		m.page = Feed
+	case page.Yes:
+		api.ClearDatabase()
+		m.page = msg.YesData()
+	case page.No:
+		m.page = msg.NoData()
+	case page.ClearDatabase:
+		m.page = Confirmation
 	case page.Quit:
 		fmt.Print("\033[H\033[2J")
 		cmds = append(cmds, tea.Quit)
+  case page.Feed:
+    m.page = Feed
+  case page.Viewer:
+    m.page = Reader
 	case page.Login:
 		m.page = Login
 		m.pages[m.page] = login.New(m.styles)
@@ -72,7 +99,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-func (m *model) updatePageModel(newModel page.Model, index currentpage) {
+func (m *model) updatePageModel(newModel page.Model, index page.Currentpage) {
 	m.pages[index] = newModel
 }
 
@@ -82,14 +109,15 @@ func (m *model) getCurrentPageModel() page.Model {
 
 func (m *model) View() string {
 	currentPageModel := m.getCurrentPageModel()
-	return " " + m.styles.Title.Render(" Feederizer") + currentPageModel.View()
+	return "\n   " + m.styles.Title.Render(" Feederizer") + currentPageModel.View()
 }
 
 func New(styles theme.Styles) *tea.Program {
+	fmt.Print("\033[H\033[2J")
 	return tea.NewProgram(
 		&model{
 			page:   Home,
-			pages:  make(map[currentpage]page.Model),
+			pages:  make(map[page.Currentpage]page.Model),
 			styles: styles,
 		})
 }

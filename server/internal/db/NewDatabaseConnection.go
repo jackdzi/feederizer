@@ -22,7 +22,13 @@ func NewDatabaseConnection() (*sqlx.DB, error) {
 	}
 
 	docker = tree.Get("deployment.docker").(bool)
-	path := "data/feederizer.db"
+  path := "../server/data/feederizer.db"
+
+
+	//path := "data/feederizer.db" Uncomment if running server in seperate instance
+
+
+
 	if docker {
 		path = "/data/feederizer.db"
 	}

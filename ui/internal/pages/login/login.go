@@ -1,12 +1,11 @@
 package login
 
 import (
-	"bytes"
-	"encoding/json"
+	"fmt"
+
 	"github.com/jackdzi/feederizer/ui/internal/pages/page"
 	"github.com/jackdzi/feederizer/ui/internal/theme"
-	"fmt"
-	"net/http"
+	"github.com/jackdzi/feederizer/ui/internal/api"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -71,13 +70,15 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 					fmt.Println("Error: ", err)
 					return m, tea.Quit
 				}
+				user := m.inputs[username].Value()
+				pass := m.inputs[password].Value()
 				m.reset()
 				if m.serverError {
 					m.inputs[username].Prompt = "\033[31mUser \033[31mnot \033[31mFound\033[0m\n"
 				} else if m.credentialError {
 					m.inputs[username].Prompt = "\033[31mInvalid \033[31mCredentials\033[0m\n"
 				} else {
-					return m, page.ReturnBackMsg
+					return m, page.ReturnAuthentication(user, pass)
 				}
 			} else {
 				m.focused = password
@@ -126,22 +127,14 @@ func (m *model) reset() {
 
 func (m *model) submitUserData() error {
 	data := map[string]string{"name": m.inputs[username].Value(), "password": m.inputs[password].Value()}
-	m.reset()
 
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		fmt.Println("Error parsing string to JSON")
-		return err
-	}
-
-	resp, err := http.Post("http://localhost:8080/credentials", "application/json", bytes.NewBuffer(jsonData))
+	serverError, credentialError, err := api.SendUserData(data)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
-	m.serverError = (resp.StatusCode == http.StatusInternalServerError)
-	m.credentialError = (resp.StatusCode == http.StatusUnauthorized)
+	m.serverError = serverError
+	m.credentialError = credentialError
 	return nil
 }
 

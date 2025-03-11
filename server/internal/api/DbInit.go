@@ -11,7 +11,7 @@ func DbInit(db *sqlx.DB, c *gin.Context) {
 	schema := `CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT UNIQUE NOT NULL,
-		password TEXT NULL OR NOT NULL
+		password TEXT NOT NULL
 	);
 
 	CREATE TABLE IF NOT EXISTS feeds (

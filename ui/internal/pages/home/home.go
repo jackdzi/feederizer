@@ -1,10 +1,14 @@
 package home
 
 import (
-	"github.com/jackdzi/feederizer/ui/internal/pages/page"
-	"github.com/jackdzi/feederizer/ui/internal/theme"
+	"fmt"
 	"os"
 	"os/exec"
+
+	"github.com/jackdzi/feederizer/ui/internal/api"
+	"github.com/jackdzi/feederizer/ui/internal/config"
+	"github.com/jackdzi/feederizer/ui/internal/pages/page"
+	"github.com/jackdzi/feederizer/ui/internal/theme"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
@@ -36,6 +40,8 @@ func New(styles theme.Styles) page.Model {
 		{"Edit Config "},
 	}
   tableStyles := table.DefaultStyles()
+  tableStyles.Cell.Foreground(lipgloss.Color(styles.TextColor))
+  tableStyles.Header.Foreground(lipgloss.Color(styles.TextColor))
   tableStyles.Selected = lipgloss.NewStyle().Bold(true).Background(lipgloss.Color(styles.TextHighlight)).Foreground(lipgloss.Color(styles.TextColor))
 
 	t := table.New(
@@ -65,6 +71,10 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
+    case key.Matches(msg, m.keys.ClearDatabase):
+      return m, page.ReturnClearDatabase
+    case key.Matches(msg, m.keys.InitializeFeed):
+      api.InitDb()
     case key.Matches(msg, m.keys.Quit):
       return m, page.ReturnQuit
 		case key.Matches(msg, m.keys.Help):
@@ -74,7 +84,8 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 			case "Login ":
 				return m, page.ReturnLogin
 			case "Edit Config ":
-				openFileWithDefaultEditor("../config.toml") // TODO: Change for docker
+		    fmt.Print("\033[H\033[2J")
+				openFileWithDefaultEditor(config.GetFilePath())
 			case "Create New User ":
 				return m, page.ReturnUser
 			}

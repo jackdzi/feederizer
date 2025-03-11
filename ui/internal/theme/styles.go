@@ -18,9 +18,22 @@ type Styles struct {
 	Footer        lipgloss.Style
 	Centering     lipgloss.Style
 	Homepage      Homepage
+	Feed          Feed
 	Title         lipgloss.Style
 	TextColor     string
 	TextHighlight string
+	Viewer        Viewport
+}
+
+type Feed struct {
+	BottomPadding lipgloss.Style
+	TableWidth    int
+	TableHeight   int
+}
+
+type Viewport struct {
+	Height int
+	Width  int
 }
 
 type InputStyles struct {
@@ -46,12 +59,22 @@ func (s *Styles) ApplySizes() {
 	} else {
 		width = w / 3
 	}
-	s.Input.Box = s.Input.Box.Width(width).MarginTop(h/3 + 1)
-	s.Homepage.Box = s.Input.Box.Width(width).MarginTop(h/3 + 1)
+	heightLeft := h - 2 - 20
+	offset := 0
+	if heightLeft%2 == 1 {
+		offset = 1
+	}
+	s.Viewer.Height = h - 8
+	s.Viewer.Width = w
+	s.Input.Box = s.Input.Box.Width(width).MarginTop(heightLeft/2 + 3 + offset)
+	s.Homepage.Box = s.Input.Box.Width(width).MarginTop(heightLeft/2 + 1 + offset)
 	s.Centering = s.Centering.Width(w)
 	s.Input.Instructions = s.Input.Instructions.Width(w)
-	s.Input.BottomPadding = s.Input.BottomPadding.Margin(0, 0, h/3+2, 0)
-	s.Homepage.BottomPadding = s.Input.BottomPadding.Margin(0, 0, h/3-1, 0)
+	s.Input.BottomPadding = s.Input.BottomPadding.Margin(0, 0, heightLeft/2, 0)
+	s.Homepage.BottomPadding = s.Input.BottomPadding.Margin(0, 0, heightLeft/2+2, 0)
+	s.Feed.BottomPadding = s.Feed.BottomPadding.MarginBottom(heightLeft / 2)
+	s.Feed.TableWidth = w - 8
+	s.Feed.TableHeight = h - 7
 }
 
 func (s *Styles) RenderInstructions() string {
@@ -60,6 +83,9 @@ func (s *Styles) RenderInstructions() string {
 
 func NewStyles() Styles {
 	s := Styles{}
+	s.Feed.TableHeight = 1
+	s.Feed.TableWidth = 1
+	s.Feed.BottomPadding = lipgloss.NewStyle().Margin(0, 0, 1, 0)
 	s.TextColor = text_color_string
 	s.TextHighlight = text_highlight_string
 	s.Title = lipgloss.NewStyle().Margin(0).Width(12).
