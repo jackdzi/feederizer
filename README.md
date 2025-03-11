@@ -3,6 +3,8 @@
 Feederizer is both a RSS aggregator and a viewer for RSS feeds, supporting usage from multiple users through its SQLite3-powered backend server, and features a fast, visually appealing terminal UI for accessing feeds.
 
 
+---
+
 ## Installation and Configuration
 
 Clone the repo somewhere on your computer, navigate into the directory, and run:
