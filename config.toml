@@ -1,8 +1,8 @@
 
 [authentication]
-  autoLogin = true
-  pass = "Zg=="
-  user = "asdf"
+  asddfdfautoLogin = true
+  pass = "c2FkZg=="
+  user = "jakc"
 
 [deployment]
   db_path = "~/Documents/databases/feederizer.db"
